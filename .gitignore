@@ -31,3 +31,9 @@
 *.db
 .vs/
 Publish/
+app
+
+appsettings.Development.json
+./appsettings.Development.json
+.appsettings.Development.json
+appsettings.Development.json/
