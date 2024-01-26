@@ -18,5 +18,4 @@ public class OrderContext : DbContext
     {
         optionsBuilder.UseMySQL(_configuration.GetConnectionString("Reto"));
     }
-
 }

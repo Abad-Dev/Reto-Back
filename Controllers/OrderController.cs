@@ -1,3 +1,4 @@
+using back.Models;
 using back.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,9 +16,26 @@ public class OrderController: ControllerBase
     }
 
     [HttpGet]
+    [Route("/createdb")]
     public ActionResult Get()
     {
-        _orderService.Get();
+        _orderService.CreateDb();
+        return Ok();
+    }
+
+    [HttpPost]
+    public ActionResult Post()
+    {
+        _orderService.CreateEmptyOrder();
+        return Ok();
+    }
+
+    [HttpPut]
+    [Route("/addproduct")]
+    public IActionResult AddProduct(string orderId, string productId)
+    {
+        _orderService.AddProductToOrder(orderId, productId);
+
         return Ok();
     }
 }
