@@ -15,10 +15,16 @@ public class ProductController: ControllerBase
         _productService = productService;
     }
 
+    [HttpGet]
+    public ActionResult Get()
+    {
+        return Ok(_productService.GetAll());
+    }
+
     [HttpPost]
     public ActionResult Post([FromBody] Product product)
     {
         _productService.Create(product);
-        return Ok();
+        return Ok(product);
     }
 }

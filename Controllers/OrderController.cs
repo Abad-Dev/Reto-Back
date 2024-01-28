@@ -17,25 +17,60 @@ public class OrderController: ControllerBase
 
     [HttpGet]
     [Route("/createdb")]
-    public ActionResult Get()
+    public ActionResult Testdb()
     {
         _orderService.CreateDb();
         return Ok();
     }
 
-    [HttpPost]
-    public ActionResult Post()
+    [HttpGet]
+    [Route("/[controller]/{id}")]
+    public ActionResult GetOne(string id)
     {
-        _orderService.CreateEmptyOrder();
-        return Ok();
+        return Ok(_orderService.GetOrderById(id));
+    }
+
+    [HttpGet]
+    public ActionResult Get()
+    {
+        return Ok(_orderService.GetAll());
+    }
+
+    [HttpPost]
+    [Route("OrderEmpty")]
+    public ActionResult CreateEmpty()
+    {
+        return Ok(_orderService.CreateEmptyOrder());
+    }
+
+    [HttpPost]
+    public ActionResult CreateOrder([FromBody] Order order)
+    {
+        return Ok(_orderService.CreateOrder(order));
+    }
+
+    [HttpDelete]
+    [Route("/[controller]/{id}")]
+    public ActionResult DeleteOrder(string id)
+    {
+        if (_orderService.DeleteOrder(id))
+        {
+            return Ok();
+        } else {
+            return BadRequest();
+        }
+
     }
 
     [HttpPut]
-    [Route("/addproduct")]
-    public IActionResult AddProduct(string orderId, string productId)
+    [Route("/add-detail")]
+    public IActionResult AddProduct(string orderId, string productId, int qty)
     {
-        _orderService.AddProductToOrder(orderId, productId);
-
-        return Ok();
+        if (_orderService.AddDetail(orderId, productId, qty))
+        {
+            return Ok();
+        } else {
+            return BadRequest();
+        }
     }
 }

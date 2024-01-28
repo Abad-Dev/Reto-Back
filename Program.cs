@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using back.Context;
 using back.Services;
 
@@ -12,6 +13,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<OrderContext>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IDetailService, DetailService>();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
