@@ -96,9 +96,15 @@ public class OrderService: IOrderService
     public Order UpdateOrder(string orderId, Order order)
     {
         Order orderFound = GetOrderById(orderId);
-        if (orderFound == null || order.Status == OrderStatus.Completed)
+        if (orderFound == null)
         {
             return null;
+        }
+        if (order.Status == OrderStatus.Completed)
+        {
+            orderFound.Status = OrderStatus.Completed;
+            _context.SaveChanges();
+            return orderFound;
         }
 
         foreach (Detail detail in order.Details)
