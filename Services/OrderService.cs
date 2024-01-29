@@ -101,11 +101,6 @@ public class OrderService: IOrderService
             return null;
         }
         if (order.Status == OrderStatus.Completed)
-        {
-            orderFound.Status = OrderStatus.Completed;
-            _context.SaveChanges();
-            return orderFound;
-        }
 
         foreach (Detail detail in order.Details)
         {
