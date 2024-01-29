@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(MyAllowSpecificOrigins, builder =>
     {
-        builder.WithOrigins("http://localhost:4173")
+        builder.WithOrigins("https://abad-dev.github.io")
                 .AllowAnyMethod()
                 .AllowAnyHeader();
     });
