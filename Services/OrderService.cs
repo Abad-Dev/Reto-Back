@@ -81,6 +81,9 @@ public class OrderService: IOrderService
             foreach(Detail detail in orderFound.Details)
             {
                 Product productFound = _context.Products.Find(detail.ProductId);
+                detail.OrderId = orderId;
+                detail.Order = orderFound;
+                detail.Product = productFound;
                 productFound.QtyInStock += detail.Qty;
             }
         }
