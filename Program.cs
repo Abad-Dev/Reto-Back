@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(MyAllowSpecificOrigins, builder =>
     {
-        builder.WithOrigins("https://vendedorperu.com")
+        builder.WithOrigins("http://localhost:4173")
                 .AllowAnyMethod()
                 .AllowAnyHeader();
     });

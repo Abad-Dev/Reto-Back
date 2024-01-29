@@ -16,6 +16,13 @@ public class ProductController: ControllerBase
     }
 
     [HttpGet]
+    [Route("/")]
+    public ActionResult Test()
+    {
+        return Ok();
+    }
+
+    [HttpGet]
     public ActionResult Get()
     {
         return Ok(_productService.GetAll());
