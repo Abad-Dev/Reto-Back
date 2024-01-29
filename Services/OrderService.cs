@@ -20,7 +20,11 @@ public class OrderService: IOrderService
 
     public Order GetOrderById(string id)
     {
-        var orderFound = _context.Orders.Where(o => o.Id == id).Include(o => o.Details).FirstOrDefault();
+        var orderFound = _context.Orders
+            .Where(o => o.Id == id)
+            .Include(o => o.Details)
+            .ThenInclude(d => d.Product)
+            .FirstOrDefault();
         return orderFound;
     }
 
@@ -47,7 +51,11 @@ public class OrderService: IOrderService
 
         foreach (Detail detail in newOrder.Details) 
         {
+            Product detailProduct = _context.Products.Find(detail.ProductId);
+            detailProduct.QtyInStock -= detail.Qty;
+
             detail.OrderId = newOrder.Id;
+            detail.Product = detailProduct;
         }
 
         _context.Orders.Add(newOrder);
@@ -68,9 +76,69 @@ public class OrderService: IOrderService
             return false;
         }
 
+        if (orderFound.Status != OrderStatus.Completed)
+        {
+            foreach(Detail detail in orderFound.Details)
+            {
+                Product productFound = _context.Products.Find(detail.ProductId);
+                productFound.QtyInStock += detail.Qty;
+            }
+        }
+
+        var detailsToRemove = _context.Details.Where(d => d.OrderId == orderId);
+
         _context.Orders.Remove(orderFound);
+        _context.Details.RemoveRange(detailsToRemove);
         _context.SaveChanges();
         return true;
+    }
+
+    public Order UpdateOrder(string orderId, Order order)
+    {
+        Order orderFound = GetOrderById(orderId);
+        if (orderFound == null || order.Status == OrderStatus.Completed)
+        {
+            return null;
+        }
+
+        foreach (Detail detail in order.Details)
+        {
+            Detail prevDetail = _context.Details
+                .Where(d => d.ProductId == detail.ProductId &&
+                d.OrderId == orderId)
+                .Include(d => d.Product)
+                .FirstOrDefault();
+            Product detailProduct = _context.Products.Find(detail.ProductId);
+            if (prevDetail != null)
+            {   
+                detailProduct.QtyInStock = detailProduct.QtyInStock + prevDetail.Qty - detail.Qty;
+            } else // New Product has been added
+            {
+                detailProduct.QtyInStock -= detail.Qty;
+            }
+            detail.OrderId = orderFound.Id;
+            detail.Order = orderFound;
+            detail.ProductId = detailProduct.Id;
+            detail.Product = detailProduct;
+        }
+
+        foreach (Detail detail in orderFound.Details)
+        {
+            Detail currDetail = order.Details.Where(d => d.ProductId == detail.ProductId).FirstOrDefault();
+
+            if (currDetail == null) // A product has been deleted
+            {
+                Product detailProduct = _context.Products.Find(detail.ProductId);
+                detailProduct.QtyInStock += detail.Qty;
+            }
+            
+        }
+
+        orderFound.Status = order.Status;
+        orderFound.Details = order.Details;
+        _context.SaveChanges();
+
+        return orderFound;
     }
 
     public bool AddDetail(string orderId, string productId, int qty)
@@ -124,6 +192,7 @@ public interface IOrderService
     public Order CreateEmptyOrder();
     public Order CreateOrder(Order order);
     public bool DeleteOrder(string orderId);
+    public Order UpdateOrder(string orderId, Order order);
     public bool AddDetail(string orderId, string productId, int qty);
     public bool IsValidDetail(Detail detail);
 }

@@ -50,10 +50,23 @@ public class OrderController: ControllerBase
     }
 
     [HttpDelete]
-    [Route("/[controller]/{id}")]
+    [Route("{id}")]
     public ActionResult DeleteOrder(string id)
     {
         if (_orderService.DeleteOrder(id))
+        {
+            return Ok();
+        } else {
+            return BadRequest();
+        }
+
+    }
+
+    [HttpPut]
+    [Route("{id}")]
+    public ActionResult UpdateOrder(string id, [FromBody] Order order)
+    {
+        if (_orderService.UpdateOrder(id, order) != null)
         {
             return Ok();
         } else {

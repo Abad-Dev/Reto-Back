@@ -27,4 +27,16 @@ public class ProductController: ControllerBase
         _productService.Create(product);
         return Ok(product);
     }
+
+    [HttpDelete]
+    [Route("{id}")]
+    public ActionResult Delete(string id)
+    {
+        if (_productService.Delete(id))
+        {
+            return Ok();
+        } else {
+            return BadRequest();
+        }
+    }
 }
