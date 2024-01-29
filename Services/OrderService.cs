@@ -88,7 +88,7 @@ public class OrderService: IOrderService
             }
         }
 
-        var detailsToRemove = _context.Details.Where(d => d.OrderId == orderId);
+        var detailsToRemove = _context.Details.Where(d => d.OrderId == orderId || d.OrderId == null);
 
         _context.Orders.Remove(orderFound);
         _context.Details.RemoveRange(detailsToRemove);
@@ -103,8 +103,6 @@ public class OrderService: IOrderService
         {
             return null;
         }
-        if (order.Status == OrderStatus.Completed)
-
         foreach (Detail detail in order.Details)
         {
             Detail prevDetail = _context.Details
@@ -134,8 +132,8 @@ public class OrderService: IOrderService
             {
                 Product detailProduct = _context.Products.Find(detail.ProductId);
                 detailProduct.QtyInStock += detail.Qty;
+                _context.Details.Remove(currDetail);
             }
-            
         }
 
         orderFound.Status = order.Status;
