@@ -132,7 +132,7 @@ public class OrderService: IOrderService
             {
                 Product detailProduct = _context.Products.Find(detail.ProductId);
                 detailProduct.QtyInStock += detail.Qty;
-                _context.Details.Remove(currDetail);
+                _context.Details.Remove(detail);
             }
         }
 
