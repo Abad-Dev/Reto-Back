@@ -30,7 +30,10 @@ public class OrderService: IOrderService
 
     public IQueryable<Order> GetAll()
     {
-        return _context.Orders.Include(o => o.Details).ThenInclude(d => d.Product).AsQueryable();
+        return _context.Orders
+            .Include(o => o.Details)
+            .ThenInclude(d => d.Product)
+            .AsQueryable();
     }
 
     public Order CreateEmptyOrder()
